@@ -1,0 +1,327 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "Email": {
+            "Description" : "Email address of student",
+            "Type": "String"
+        },
+        "KeyName": {
+            "Description" : "Name of SSH key to use",
+            "Type": "String"
+        }
+    },
+    "Description" : "Infrastructure Training Lab",
+    "Mappings" : {
+        "EbsBootAMIByRegion" : {
+            "us-east-1" : {
+                "AMI" : "ami-06ad526f"
+            },
+            "us-west-1" : {
+                "AMI" : "ami-116f3c54"
+            },
+            "eu-west-1" : {
+                "AMI" : "ami-359ea941"
+            },
+            "ap-southeast-1" : {
+                "AMI" : "ami-62582130"
+            },
+            "ap-northeast-1" : {
+                "AMI" : "ami-d8b812d9"
+            }
+        }
+    },
+    "Resources": {
+        "WebSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription" : "Lab Web Group",
+                "SecurityGroupIngress": [
+                    {
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "80",
+                         "ToPort": "80",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "5666",
+                         "ToPort": "5666",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "4949",
+                         "ToPort": "4949",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "-1",
+                         "ToPort": "-1",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "icmp"
+                    },
+                    {
+                         "FromPort": "80",
+                         "ToPort": "80",
+                         "CidrIp": "0.0.0.0/0",
+                         "IpProtocol": "tcp"
+                    }
+                ]
+            }
+        },
+        "DBSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription" : "Lab DB Group",
+                "SecurityGroupIngress": [
+                    {
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "3306",
+                         "ToPort": "3306",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "5666",
+                         "ToPort": "5666",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "tcp"
+                    },
+                    {
+                         "FromPort": "-1",
+                         "ToPort": "-1",
+                         "SourceSecurityGroupName" : {"Ref" : "MonitorSG"},
+                         "IpProtocol": "icmp"
+                    },
+                    {
+                         "FromPort": "3306",
+                         "ToPort": "3306",
+                         "SourceSecurityGroupName" : {"Ref" : "WebSG"},
+                         "IpProtocol": "tcp"
+                    }
+                ]
+            }
+        },
+        "MonitorSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription" : "Lab Monitor Group",
+                "SecurityGroupIngress": [
+                    {
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    },
+                    {
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    }
+                ]
+            }
+        },
+        "GoServerSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription" : "Lab Go Server Group",
+                "SecurityGroupIngress": [
+                    {
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    },
+                    {
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    },
+                    {
+                        "FromPort": "8153",
+                        "ToPort": "8153",
+                        "CidrIp": "0.0.0.0/0",
+                        "IpProtocol": "tcp"
+                    }
+                ]
+            }
+        },
+        "ManualWeb" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "t1.micro",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "WebSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        },
+        "ManualDB" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "t1.micro",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "DBSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        },
+        "Monitoring" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "t1.micro",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "MonitorSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        },
+        "PuppetWeb" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "t1.micro",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "WebSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        },
+        "PuppetDB" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "t1.micro",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "DBSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        },
+        "GoServer" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : "m1.small",
+                "KeyName" : { "Ref" : "KeyName" },
+                "ImageId" : { "Fn::FindInMap" : [ "EbsBootAMIByRegion", { "Ref" : "AWS::Region" }, "AMI" ]},
+                "SecurityGroups" : [{
+                    "Ref" : "GoServerSG"
+                }],
+                "UserData" : { "Fn::Base64" :
+                    { "Fn::Join" : ["\n", [
+                        "#!/bin/sh",
+                        "",
+                        "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
+                    ]]}
+                },
+                "Tags" : [{
+                    "Key" : "Name",
+                    "Value" : {
+                        "Ref" : "Email"
+                    }
+                }]
+            }
+        }
+    },
+    "Outputs" : {
+        "ManualWeb" : {
+            "Value" : { "Ref" : "ManualWeb" }
+        },
+        "ManualDB" : {
+            "Value" : { "Ref" : "ManualDB" }
+        },
+        "Monitoring" : {
+            "Value" : { "Ref" : "Monitoring" }
+        },
+        "PuppetWeb" : {
+            "Value" : { "Ref" : "PuppetWeb" }
+        },
+        "PuppetDB" : {
+            "Value" : { "Ref" : "PuppetDB" }
+        },
+        "GoServer" : {
+            "Value" : { "Ref" : "GoServer" }
+        }
+    }
+}
