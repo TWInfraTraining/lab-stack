@@ -44,7 +44,7 @@ add the following lines to your .bash_profile:
 ```
 export AWS_CREDENTIAL_FILE=~/.ec2/access.pl
 export AWS_CREDENTIALS_FILE=~/.ec2/access.pl
-export AWS_CLOUDFORMATION_HOME=/usr/local/Cellar/aws-cfn-tools/1.0.8/jars
+export AWS_CLOUDFORMATION_HOME=/usr/local/Cellar/aws-cfn-tools/1.0.9/jars
 ```
 
 #### manually
