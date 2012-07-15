@@ -24,53 +24,6 @@ Run the following to see the proper ways to use `lab_stack.sh`
 
 ## Setup Instructions
 
-### Install CloudFormation command line tools either
-
-#### with homebrew
-
-```
-brew install aws-cfn-tools
-```
-
-create a file containing your aws access keys  (ex: ~/.ec2/access.pl)
-
-```
-AWSAccessKeyId=23SDFLJ3LKJ3LKJ3F
-AWSSecretKey=843LJK343ljkf4343LJKS/dsflkj43lkjs23KJ
-```
-
-add the following lines to your .bash_profile:
-
-```
-export AWS_CREDENTIAL_FILE=~/.ec2/access.pl
-export AWS_CREDENTIALS_FILE=~/.ec2/access.pl
-export AWS_CLOUDFORMATION_HOME=/usr/local/Cellar/aws-cfn-tools/1.0.9/jars
-```
-
-#### manually
-
-Follow the instructions [here](https://forums.aws.amazon.com/message.jspa?messageID=227236)
-
-### Install SES command line tools
-
-Follow the instructions [here](http://aws.amazon.com/code/Amazon-SES/8945574369528337) You can put the
-tools in `/usr/local/ses/bin` and add the following to `.bash_profile`
-
-```
-export PERL5LIB=/usr/local/ses/bin
-export PATH=$PATH:/usr/local/ses/bin
-export SES_FROM_EMAIL=<your email address>
-```
-
-### Verify your email address
-
-Run the following script
-
-```
-ses-verify-email-address.pl -v <your email address>
-```
-
-Open the verification email that Amazon sends you and click on the
-link. This will enable you to send emails to yourself only and is
-useful for testing. You will then need to request SES production
-access. THIS WILL TAKE ABOUT 24 HOURS TO PROCESS.
+In order to run the lab-stack, you will need to follow the instructions
+[here](https://github.com/ThoughtWorksInc/InfraTraining) to setup AWS and
+your machine.
