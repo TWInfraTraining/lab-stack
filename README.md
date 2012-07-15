@@ -5,18 +5,18 @@ for each participant in a class. In order to use it you will need to
 sign up and install the tools for CloudFormation and SES.
 
 The lab stack is created based on a CloudFormation template which is
-stored in infra_lab.template. The lab_stack.sh script however is
+stored in `infra_lab.template`. The `lab_stack.sh` script however is
 fairly coupled with this template at the moment.
 
-In order to simplify the class for the participants lab_stack.sh will
+In order to simplify the class for the participants `lab_stack.sh` will
 create and upload a hosts file to each of the created machine so they
-can refer to one another with friendly names like web.part1.com. The
+can refer to one another with friendly names like `web.part1.com`. The
 email sent to the participants will also contain a section that can be
-pasted into their /etc/hosts.
+pasted into their `/etc/hosts`.
 
 ## Usage
 
-Run the following to see the proper ways to use lab_stack.sh
+Run the following to see the proper ways to use `lab_stack.sh`
 
 ```
 ./lab_stack.sh -h
@@ -26,7 +26,7 @@ Run the following to see the proper ways to use lab_stack.sh
 
 ### Install CloudFormation command line tools either
 
-- with homebrew
+#### with homebrew
 
 ```
 brew install aws-cfn-tools
@@ -47,16 +47,14 @@ export AWS_CREDENTIALS_FILE=~/.ec2/access.pl
 export AWS_CLOUDFORMATION_HOME=/usr/local/Cellar/aws-cfn-tools/1.0.8/jars
 ```
 
-- manually
+#### manually
 
-Follow the instructions at
-https://forums.aws.amazon.com/message.jspa?messageID=227236
+Follow the instructions [here](https://forums.aws.amazon.com/message.jspa?messageID=227236)
 
 ### Install SES command line tools
 
-Follow the instructions at
-http://aws.amazon.com/code/Amazon-SES/8945574369528337 You can put the
-tools in ```/usr/local/ses/bin``` and add the following to ```.bash_profile```
+Follow the instructions [here](http://aws.amazon.com/code/Amazon-SES/8945574369528337) You can put the
+tools in `/usr/local/ses/bin` and add the following to `.bash_profile`
 
 ```
 export PERL5LIB=/usr/local/ses/bin
