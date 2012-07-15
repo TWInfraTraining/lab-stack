@@ -19,7 +19,7 @@ Options:
 
     -c EMAIL_ADDRESS         Create a stack for this email address
     -d EMAIL_ADDRESS         Delete a stack for this email address
- 
+
     -C <FILENAME>            Create stacks from a file containing a list of
                              email addresses. Specify - to use STDIN
 
@@ -49,7 +49,7 @@ function get_stack_output {
 
 function get_instance_dns {
     local instance_id=$1
-    if [ -z "$instance_id" ]; then 
+    if [ -z "$instance_id" ]; then
         local instance_id=`cat -`
     fi
 
@@ -77,7 +77,7 @@ function create_key {
 function upload_hosts_file {
     local email=$1
     shift
-    
+
     local key_name=$(get_key_name_from_email $email)
     local HOSTS=$@
 
@@ -134,8 +134,8 @@ function notify_user {
 EOF
 
     upload_hosts_file $email "$MANUAL_WEB_DNS|web.part1.com" "$MANUAL_DB_DNS|db.part1.com" "$MONITOR_DNS|monitor.part2.com" "$PUPPET_WEB_DNS|web.part2.com" "$PUPPET_DB_DNS|db.part2.com" "$GO_SERVER_DNS|go.part3.com"
-    
-    cat <<EOF | ses-send-email.pl -s "$SUBJECT" -f "$FROM_EMAIL" -b "$FROM_EMAIL" $email
+
+    cat <<EOF | tee >(cat) | ses-send-email.pl -s "$SUBJECT" -f "$FROM_EMAIL" -b "$FROM_EMAIL" $email
 
 Welcome to the ThoughtWorks Infrastructure Automation Lab. The
 following virtual machines have been assigned to you for the duration
