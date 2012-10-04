@@ -172,6 +172,8 @@
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
                         "",
+                        "set -e -x",
+                        "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
                 },
@@ -195,6 +197,8 @@
                 "UserData" : { "Fn::Base64" :
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
+                        "",
+                        "set -e -x",
                         "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
@@ -220,6 +224,8 @@
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
                         "",
+                        "set -e -x",
+                        "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
                 },
@@ -243,6 +249,8 @@
                 "UserData" : { "Fn::Base64" :
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
+                        "",
+                        "set -e -x",
                         "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
@@ -268,6 +276,8 @@
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
                         "",
+                        "set -e -x",
+                        "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
                 },
@@ -291,6 +301,8 @@
                 "UserData" : { "Fn::Base64" :
                     { "Fn::Join" : ["\n", [
                         "#!/bin/sh",
+                        "",
+                        "set -e -x",
                         "",
                         "wget http://thoughtworksinc.github.com/InfraTraining/files/setup_node.sh && bash setup_node.sh"
                     ]]}
