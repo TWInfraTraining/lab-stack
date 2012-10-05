@@ -135,7 +135,7 @@ EOF
 
     upload_hosts_file $email "$MANUAL_WEB_DNS|web.part1.com" "$MANUAL_DB_DNS|db.part1.com" "$MONITOR_DNS|monitor.part2.com" "$PUPPET_WEB_DNS|web.part2.com" "$PUPPET_DB_DNS|db.part2.com" "$GO_SERVER_DNS|go.part3.com"
 
-    cat <<EOF | tee >(cat) | ses-send-email.pl -s "$SUBJECT" -f "$FROM_EMAIL" -b "$FROM_EMAIL" $email
+    cat <<EOF | ses-send-email.pl -s "$SUBJECT" -f "$FROM_EMAIL" -b "$FROM_EMAIL" -c "$FROM_EMAIL" $email
 
 Welcome to the ThoughtWorks Infrastructure Automation Lab. The
 following virtual machines have been assigned to you for the duration
